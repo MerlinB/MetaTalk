@@ -92,6 +92,7 @@
 
             #messageContainer {
                 overflow-y: auto;
+                width: 100%;
             }
 
             #messages > tr {
@@ -128,7 +129,7 @@
             #moneybutton {
                 padding: 1rem;
                 width: 135px !important;
-                overflow: hidden;
+                overflow: show;
             }
         </style>
     </head>
@@ -158,6 +159,7 @@
             var chatArea = document.getElementById('chatArea')
             var messages = document.getElementById('messages')
             var moneybutton = document.getElementById('moneybutton')
+            var messageContainer = document.getElementById('messageContainer')
             var plop = new Audio('plop.mp3')
 
             update()
@@ -277,6 +279,10 @@
                     })
             }
 
+            function checkScrolledDown() {
+                return (messageContainer.offsetHeight + messageContainer.scrollTop == messageContainer.scrollHeight);
+            }
+
             function initBitSocket() {
                 var query = {
                     v: 3,
@@ -300,11 +306,17 @@
                 );
                 // Event handler
                 bitsocket.onmessage = function(e) {
+                    var isScrolledDown = checkScrolledDown()
                     const data = JSON.parse(e.data);
                     data.data.forEach(tx => {
                         appendTx(tx);
-                        $('td').linkify()
-                        plop.play();
+                        $('td').linkify();
+                    });
+                    if (isScrolledDown){
+                        $("#messageContainer").scrollTop(1000000);
+                    }
+                    plop.play().catch(e => {
+                        console.log(e);
                     });
                 };
             }
