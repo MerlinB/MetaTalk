@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300">
+        <script type="text/javascript" src="https://unpkg.com/bsv@0.26.4/bsv.min.js"></script>
+        <script src="https://www.moneybutton.com/moneybutton.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/jacwright/date.format/date.format.js"></script>
+        <style>
+            body {
+                background-color: #ffffff;
+                font-family: 'Open Sans', serif;
+                font-size: 1rem;
+                color: #000000;
+            }
+
+            h1 {
+                text-align: center;
+            }
+
+            input{
+                font-family: 'Open Sans', serif;
+                border: none;
+                background: transparent;
+                color: #000000;
+                text-align: center;
+                outline: none;
+            }
+
+            textarea{
+                font-family: 'Open Sans', serif;
+                border: none;
+                background: transparent;
+                color: #000000;
+            }
+
+
+            .centered {
+                text-align: center;
+                margin: auto;
+                position: absolute;
+                top: 50%;
+                width: 100%;
+                /* left: 0; right: 0; */
+            }
+
+            .title {
+                text-align: center;
+                top: 4rem;
+                margin: auto;
+                position:absolute;
+                width: 100%;
+                transition: bottom 1.5s ease-in-out;
+            }
+
+            .primaryInput {
+                font-size: 3rem;
+                display: block;
+                white-space: nowrap;
+                letter-spacing: .10em;
+                transition: .3s ease;
+            }
+
+            .content {
+                max-width: 50rem;
+                min-width: 30%;
+                margin: auto;
+                display: block;
+                padding-top: 4rem;
+            }
+
+            #chatInput {
+                width: inherit;
+                position: absolute;
+                padding-bottom: 3rem;
+                bottom: 0;
+                margin: auto;
+            }
+
+            #messages > tr {
+                transition: opacity 1s ease-in-out;
+                will-change: opacity;
+            }
+
+            #messages tr > :first-child {
+                font-weight: bold;
+                color: grey;
+            }
+
+            #messages tr > :nth-child(2) {
+                padding-left: 2rem;
+                font-weight: bold;
+            }
+
+            #messages tr > :nth-child(3) {
+                padding-left: 1rem;
+            }
+
+            #chatArea {
+                border-bottom: 1px solid black;
+                font-size: 1.5rem;
+                resize: none;
+                outline: none;
+            }
+
+            #moneybutton {
+                padding: 1rem;
+            }
+        </style>
+    </head>
+    <body onhashchange="update()">
+        <h1>MetaTalk</h1>
+        <input id="nameInput" class="centered primaryInput" step=1 name="name" placeholder="Who are you?" style="display: none;">
+        <input id="channelInput" class="centered primaryInput" step=2 name="channel" placeholder="Choose a channel" style="display: none;" oninput="addHashtag()">
+        <div id="content" class="content" style="display: none;">
+            <table id="messages">
+            </table>
+            <div id="chatInput">
+                <textarea id="chatArea" cols="40" rows="1" placeholder="Write something" oninput="updateMoneyButton()" autocomplete="off"></textarea>
+                <div id="moneybutton"></div>
+            </div>
+        </div>
+
+        <script>
+            var name
+            var channel
+            var nameInput = document.getElementById('nameInput')
+            var channelInput = document.getElementById('channelInput')
+            var chatArea = document.getElementById('chatArea')
+            var messages = document.getElementById('messages')
+            var moneybutton = document.getElementById('moneybutton')
+
+            update()
+
+            channelInput.addEventListener("keyup", onChannelEnter)
+            nameInput.addEventListener("keyup", onNameEnter)
+
+            function update() {
+                if (window.location.hash) {
+                    channel = window.location.hash
+                }
+
+                if (!name) {
+                    channelInput.style.display = 'hidden'
+                    nameInput.style.display = 'block'
+                    nameInput.focus()
+                    nameInput.select()
+                } else if (!channel) {
+                    nameInput.style.display = 'hidden'
+                    channelInput.style.display = 'block'
+                    channelInput.focus()
+                    channelInput.select()
+                } else {
+                    setChannel()
+                }
+            }
+
+            function emptyMessages() {
+                while (messages.firstChild) {
+                    messages.removeChild(messages.firstChild);
+                }
+            }
+
+            function onNameEnter(event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault()
+                    name = nameInput.value
+                    nameInput.style.display = 'none'
+                    update()
+                }
+            }
+
+            function onChannelEnter(event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault()
+                    channel = channelInput.value
+                    window.location.href = channel
+                }
+            }
+
+            function setChannel() {
+                moveChannelInput()
+                loadContent()
+            }
+
+            function moveChannelInput() {
+                channelInput.value = channel
+                channelInput.classList.remove('centered')
+                channelInput.classList.add('title')
+                channelInput.style.display = 'block'
+            }
+
+            function addHashtag() {
+                var input = channelInput.value
+                if (!input.startsWith('#')) {
+                    channelInput.value = '#' + input
+                }
+            }
+
+            function loadContent() {
+                var content = document.getElementById('content')
+                content.style.display = 'block'
+                chatArea.focus()
+                chatArea.select()
+                emptyMessages()
+                loadMessages()
+                initBitSocket()
+                updateMoneyButton()
+            }
+
+            function loadMessages() {
+                var query = {
+                    v: 3,
+                    q: {
+                        find: {
+                            'out.s1': 'METATALK',
+                            'out.s3': channel
+                        },
+                        limit: 50,
+                        sort: {
+                            "blk.i": 1
+                        }
+                    }
+                }
+                var b64 = btoa(JSON.stringify(query))
+                var url = 'https://genesis.bitdb.network/q/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/' + b64
+                var config = {
+                    method: "GET",
+                    headers: { key: '1FqXopESziMTrJU4rTYL6vkpPzo41Zhqzy' }
+                }
+
+                fetch(url, config)
+                    .then(function(response) {
+                        return response.json()
+                    })
+                    .then(function(result) {
+                        const allResults = []
+                        if (result.u.length) {
+                            allResults.push(...result.u)
+                        }
+                        if (result.c.length) {
+                            allResults.push(...result.c)
+                        }
+                        allResults.forEach(tx => {
+                            appendTx(tx)
+                    })
+                })
+            }
+
+            function initBitSocket() {
+                var query = {
+                    v: 3,
+                    q: {
+                        find: {
+                        'out.s1': 'METATALK',
+                        'out.s3': channel
+                        }
+                    }
+                }
+
+                if (bitsocket) {
+                    bitsocket.close()
+                }
+
+                // Encode it in base64 format
+                var b64 = btoa(JSON.stringify(query));
+                // Subscribe
+                var bitsocket = new EventSource(
+                    'https://genesis.bitdb.network/s/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/' + b64
+                );
+                // Event handler
+                bitsocket.onmessage = function(e) {
+                    const data = JSON.parse(e.data);
+                    data.data.forEach(tx => {
+                        appendTx(tx);
+                    });
+                };
+            }
+
+            function appendTx(tx) {
+                var tr = document.createElement("tr")
+                var td_time = document.createElement("td")
+                var td_name = document.createElement("td")
+                var td_message = document.createElement("td")
+                var message_string = document.createTextNode(tx.out[0].s4)
+                var name_string = document.createTextNode(tx.out[0].s2)
+                var date = (tx.blk) ? (new Date(tx.blk.t)) : (Date.now()/1000)
+                var time_string = document.createTextNode(dateToString(date))
+                td_message.appendChild(message_string)
+                td_name.appendChild(name_string)
+                td_time.appendChild(time_string)
+                tr.appendChild(td_time)
+                tr.appendChild(td_name)
+                tr.appendChild(td_message)
+                messages.appendChild(tr)
+                tr.style.opacity = 0;
+                requestAnimationFrame(setOpacity);
+                function setOpacity() {
+                    tr.style.opacity = 1;
+                }
+            }
+
+            function dateToString(timestamp) {
+                var date = new Date(timestamp*1000)
+                return date.format('M jS, Y: H:i')
+            }
+
+            function updateMoneyButton(){
+                var message = chatArea.value
+                message = bsv.Script.buildDataOut(["METATALK", name, channel, message]).toASM()
+                moneyButton.render(moneybutton, {
+                    successMessage: "Sent!",
+                    outputs: [{
+                        type: "USER",
+                        userId: "3553",
+                        amount: "0.01",
+                        currency: "USD"
+                    },
+                    {
+                        type: 'SCRIPT',
+                        script: message,
+                        amount: '0',
+                        currency: 'BSV'
+                    }],
+                    label: "Send",
+                    clientIdentifier: "36b563aee1b5d11a0693d79a582afccc",
+                    buttonId: "234325",
+                    onPayment: function (arg) {
+                        console.log('onPayment', arg)
+                        chatArea.value = ''
+                        chatArea.focus()
+                        chatArea.select()
+                    }
+                })
+            }
+        </script>
+    </body>
+</html>
