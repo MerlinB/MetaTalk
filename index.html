@@ -6,6 +6,7 @@
         <script type="text/javascript" src="https://unpkg.com/bsv@0.26.4/bsv.min.js"></script>
         <script src="https://www.moneybutton.com/moneybutton.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/jacwright/date.format/date.format.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/alexcorvi/anchorme.js/dist-browser/anchorme.min.js"></script>
         <style>
             body {
                 background-color: #ffffff;
@@ -286,7 +287,6 @@
                 var td_time = document.createElement("td")
                 var td_name = document.createElement("td")
                 var td_message = document.createElement("td")
-                var message_string = document.createTextNode(tx.out[0].s4)
                 var name_string = document.createTextNode(tx.out[0].s2)
 
                 var date = (tx.timestamp) ? (new Date(tx.timestamp)) : (tx.blk) ? (new Date(tx.blk.t)) : (none)
@@ -299,7 +299,7 @@
 
                 var time_string = (date) ? document.createTextNode(date.format('H:i')) : "just now"
 
-                td_message.appendChild(message_string)
+                td_message.innerHTML = anchorme(tx.out[0].s4)
                 td_name.appendChild(name_string)
                 td_time.appendChild(time_string)
                 tr.appendChild(td_time)
