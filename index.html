@@ -217,15 +217,15 @@
                         },
                         limit: 50,
                         sort: {
-                            "blk.i": 1
+                            "timestamp": 1
                         }
                     }
                 }
                 var b64 = btoa(JSON.stringify(query))
-                var url = 'https://genesis.bitdb.network/q/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/' + b64
+                var url = 'https://chronos.bitdb.network/q/1P6o45vqLdo6X8HRCZk8XuDsniURmXqiXo/' + b64
                 var config = {
                     method: "GET",
-                    headers: { key: '1FqXopESziMTrJU4rTYL6vkpPzo41Zhqzy' }
+                    headers: { key: '1Fv74ecZUvXVJempfakNgFHgWzrpFEBuVm' }
                 }
 
                 fetch(url, config)
@@ -234,12 +234,12 @@
                     })
                     .then(function(result) {
                         const allResults = []
-                        if (result.u.length) {
-                            allResults.push(...result.u)
+                        if (result.t.length) {
+                            allResults.push(...result.t)
                         }
-                        if (result.c.length) {
-                            allResults.push(...result.c)
-                        }
+                        // if (result.c.length) {
+                        //     allResults.push(...result.c)
+                        // }
                         allResults.forEach(tx => {
                             appendTx(tx)
                     })
@@ -265,7 +265,7 @@
                 var b64 = btoa(JSON.stringify(query));
                 // Subscribe
                 var bitsocket = new EventSource(
-                    'https://genesis.bitdb.network/s/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/' + b64
+                    'https://chronos.bitdb.network/s/1P6o45vqLdo6X8HRCZk8XuDsniURmXqiXo/' + b64
                 );
                 // Event handler
                 bitsocket.onmessage = function(e) {
@@ -283,8 +283,10 @@
                 var td_message = document.createElement("td")
                 var message_string = document.createTextNode(tx.out[0].s4)
                 var name_string = document.createTextNode(tx.out[0].s2)
-                var date = (tx.blk) ? (new Date(tx.blk.t)) : (Date.now()/1000)
-                var time_string = document.createTextNode(dateToString(date))
+
+                var date = (tx.timestamp) ? (new Date(tx.timestamp/1000)) : (tx.blk) ? (new Date(tx.blk.t)) : (none)
+                var time_string = (date) ? document.createTextNode(dateToString(date)) : "just now"
+
                 td_message.appendChild(message_string)
                 td_name.appendChild(name_string)
                 td_time.appendChild(time_string)
