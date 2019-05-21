@@ -70,17 +70,32 @@
                 display: flex;
                 padding-top: 4rem;
                 justify-content: center;
+                padding-bottom: 0;
+                position: absolute;
+                top: 7rem;
+                bottom: 10rem;
+                left: 0;
+                right: 0;
             }
 
             #chatInput {
+                z-index: 10;
                 width: inherit;
-                position: absolute;
+                position: fixed;
                 padding-bottom: 3rem;
                 bottom: 0;
                 margin: auto;
                 align-items: baseline;
                 justify-content: space-between;
                 display: flex;
+            }
+
+            #messageContainer {
+                overflow-y: auto;
+            }
+
+            #messeges {
+                /* overflow: scroll; */
             }
 
             #messages > tr {
@@ -126,8 +141,10 @@
         <input id="nameInput" class="centered primaryInput" step=1 name="name" placeholder="Enter a name" style="display: none;">
         <input id="channelInput" class="centered primaryInput" step=2 name="channel" placeholder="Choose a channel" style="display: none;" oninput="addHashtag()">
         <div id="content" class="content" style="display: none;">
-            <table id="messages">
-            </table>
+            <div id="messageContainer">
+                <table id="messages">
+                </table>
+            </div>
             <div id="chatInput">
                 <div>
                 <textarea id="chatArea" cols="40" rows="1" placeholder="Write something" oninput="updateMoneyButton()" autocomplete="off"></textarea>
@@ -260,6 +277,7 @@
                             appendTx(tx);
                         });
                         $('td').linkify();
+                        $("#messageContainer").scrollTop(1000000)
                     })
             }
 
