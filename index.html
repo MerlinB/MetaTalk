@@ -129,6 +129,7 @@
             var chatArea = document.getElementById('chatArea')
             var messages = document.getElementById('messages')
             var moneybutton = document.getElementById('moneybutton')
+            var plop = new Audio('plop.mp3')
 
             update()
 
@@ -273,6 +274,7 @@
                     const data = JSON.parse(e.data);
                     data.data.forEach(tx => {
                         appendTx(tx);
+                        plop.play();
                     });
                 };
             }
