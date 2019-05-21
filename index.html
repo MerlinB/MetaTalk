@@ -312,13 +312,13 @@
                     data.data.forEach(tx => {
                         appendTx(tx);
                         $('td').linkify();
+                        plop.play().catch(e => {
+                            console.log(e);
+                        });
                     });
                     if (isScrolledDown){
                         $("#messageContainer").scrollTop(1000000);
                     }
-                    plop.play().catch(e => {
-                        console.log(e);
-                    });
                 };
             }
 
