@@ -83,8 +83,10 @@
             }
 
             #messages tr > :first-child {
+                white-space: nowrap;
                 font-weight: bold;
                 color: grey;
+                float: right;
             }
 
             #messages tr > :nth-child(2) {
@@ -122,6 +124,7 @@
         </div>
 
         <script>
+            var current_day
             var name
             var channel
             var nameInput = document.getElementById('nameInput')
@@ -153,12 +156,6 @@
                     channelInput.select()
                 } else {
                     setChannel()
-                }
-            }
-
-            function emptyMessages() {
-                while (messages.firstChild) {
-                    messages.removeChild(messages.firstChild);
                 }
             }
 
@@ -203,10 +200,17 @@
                 content.style.display = 'block'
                 chatArea.focus()
                 chatArea.select()
-                emptyMessages()
+                resetContent()
                 loadMessages()
                 initBitSocket()
                 updateMoneyButton()
+            }
+
+            function resetContent() {
+                while (messages.firstChild) {
+                    messages.removeChild(messages.firstChild);
+                }
+                current_day = null;
             }
 
             function loadMessages() {
@@ -239,9 +243,6 @@
                         if (result.t.length) {
                             allResults.push(...result.t)
                         }
-                        // if (result.c.length) {
-                        //     allResults.push(...result.c)
-                        // }
                         allResults.forEach(tx => {
                             appendTx(tx)
                     })
@@ -287,8 +288,15 @@
                 var message_string = document.createTextNode(tx.out[0].s4)
                 var name_string = document.createTextNode(tx.out[0].s2)
 
-                var date = (tx.timestamp) ? (new Date(tx.timestamp/1000)) : (tx.blk) ? (new Date(tx.blk.t)) : (none)
-                var time_string = (date) ? document.createTextNode(dateToString(date)) : "just now"
+                var date = (tx.timestamp) ? (new Date(tx.timestamp)) : (tx.blk) ? (new Date(tx.blk.t)) : (none)
+
+                var day = date.format('M jS')
+                if (day && (day != current_day)) {
+                    appendDate(day);
+                    current_day = day;
+                }
+
+                var time_string = (date) ? document.createTextNode(date.format('H:i')) : "just now"
 
                 td_message.appendChild(message_string)
                 td_name.appendChild(name_string)
@@ -304,9 +312,17 @@
                 }
             }
 
-            function dateToString(timestamp) {
-                var date = new Date(timestamp*1000)
-                return date.format('M jS: H:i')
+            function appendDate(string) {
+                var gap = document.createElement("tr")
+                var date_heading = document.createElement("h4")
+                var date_string = document.createTextNode(string)
+                gap.appendChild(date_heading)
+                date_heading.appendChild(date_string)
+                messages.appendChild(gap)
+                gap.style.opacity = 0;
+                requestAnimationFrame(() => {
+                    gap.style.opacity = 1;
+                });
             }
 
             function updateMoneyButton(){
