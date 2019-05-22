@@ -23,6 +23,11 @@
             h1 {
                 text-align: center;
                 font-size: 1.5rem;
+                cursor: pointer;
+            }
+
+            h1:hover {
+                color: #4772f6;
             }
 
             input{
@@ -213,7 +218,7 @@
         </style>
     </head>
     <body onhashchange="update()">
-        <h1>MetaTalk</h1>
+        <h1 onclick="resetChannel()">MetaTalk</h1>
         <input id="nameInput" class="centered primaryInput" step=1 name="name" placeholder="Enter a name" style="display: none;">
         <input id="channelInput" class="centered primaryInput" step=2 name="channel" placeholder="Choose a channel" style="display: none;" oninput="addHashtag()">
         <div id="channelCloud"></div>
@@ -242,6 +247,7 @@
             var moneybutton = document.getElementById('moneybutton')
             var messageContainer = document.getElementById('messageContainer')
             var channelCloud = document.getElementById('channelCloud')
+            var content = document.getElementById('content')
             var plop = new Audio('plop.mp3')
             var linkifyOptions = {
                 tagName: {
@@ -265,14 +271,26 @@
                     nameInput.focus()
                     nameInput.select()
                 } else if (!channel) {
-                    nameInput.style.display = 'hidden'
-                    channelInput.removeAttribute("style")
-                    setCloudWords()
-                    channelInput.focus()
-                    channelInput.select()
+                    showChannelSelect()
                 } else {
                     setChannel()
                 }
+            }
+
+            function showChannelSelect() {
+                nameInput.style.display = 'none';
+                content.style.display = 'none';
+                channelInput.removeAttribute("style")
+                resetChannelInput()
+                setCloudWords()
+                channelInput.focus()
+                channelInput.select()
+            }
+
+            function resetChannel() {
+                channel = null;
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+                update()
             }
 
             function onNameEnter(event) {
@@ -305,6 +323,13 @@
                 channelInput.removeAttribute("style")
             }
 
+            function resetChannelInput() {
+                channelInput.value = null;
+                channelInput.classList.remove('title');
+                channelInput.classList.add('centered');
+                channelInput.style.display = 'hidden';
+            }
+
             function addHashtag() {
                 var input = channelInput.value
                 if (!input.startsWith('#')) {
@@ -313,7 +338,6 @@
             }
 
             function loadContent() {
-                var content = document.getElementById('content')
                 content.removeAttribute("style")
                 chatArea.focus()
                 chatArea.select()
