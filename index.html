@@ -170,6 +170,7 @@
             var current_day
             var name
             var channel
+            var bitsocket
             var nameInput = document.getElementById('nameInput')
             var channelInput = document.getElementById('channelInput')
             var chatArea = document.getElementById('chatArea')
@@ -322,7 +323,7 @@
                 // Encode it in base64 format
                 var b64 = btoa(JSON.stringify(query));
                 // Subscribe
-                var bitsocket = new EventSource(
+                bitsocket = new EventSource(
                     'https://chronos.bitdb.network/s/1P6o45vqLdo6X8HRCZk8XuDsniURmXqiXo/' + b64
                 );
                 // Event handler
