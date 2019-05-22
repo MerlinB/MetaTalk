@@ -100,11 +100,21 @@
                 cursor: pointer;
             }
 
+            a {
+                color: black;
+                text-decoration: none;
+            }
+
+            a:hover {
+                color: #4772f6;
+                cursor: pointer;
+            }
+
             #chatInput {
                 z-index: 10;
                 width: inherit;
                 position: fixed;
-                padding-bottom: 3rem;
+                padding-bottom: 5rem;
                 bottom: 0;
                 margin: auto;
                 align-items: baseline;
@@ -162,6 +172,12 @@
                 left: 0;
                 right: 0;
                 position: absolute;
+            }
+
+            #contact {
+                position: absolute;
+                bottom: 2rem;
+                right: 3rem;
             }
 
             .jqcloud {
@@ -234,6 +250,7 @@
                 <div id="moneybutton"></div>
             </div>
         </div>
+        <div id="contact"><a href="https://twitter.com/MerlinBuczek">@MerlinBuczek</a></div>
 
         <script>
             var current_day
