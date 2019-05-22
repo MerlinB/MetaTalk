@@ -177,6 +177,11 @@
             var moneybutton = document.getElementById('moneybutton')
             var messageContainer = document.getElementById('messageContainer')
             var plop = new Audio('plop.mp3')
+            var linkifyOptions = {
+                tagName: {
+                    mention: 'b'
+                }
+            }
 
             update()
 
@@ -290,9 +295,7 @@
                         allResults.forEach(tx => {
                             appendTx(tx);
                         });
-                        $('td').linkify({tagName: {
-                            mention: 'b'
-                        }});
+                        $('td').linkify(linkifyOptions);
                         $("#messageContainer").scrollTop(1000000)
                     })
             }
@@ -328,7 +331,7 @@
                     const data = JSON.parse(e.data);
                     data.data.forEach(tx => {
                         appendTx(tx);
-                        $('td').linkify();
+                        $('td').linkify(linkifyOptions);
                         plop.play().catch(e => {
                             console.log(e);
                         });
