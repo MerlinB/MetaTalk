@@ -9,6 +9,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="js/linkify.min.js"></script>
         <script src="js/linkify-jquery.min.js"></script>
+        <script src="js/linkify-plugin-mention.min.js"></script>
+        <script src="js/linkify-plugin-hashtag.min.js"></script>
         <style>
             body {
                 background-color: #ffffff;
@@ -77,6 +79,19 @@
                 bottom: 10rem;
                 left: 0;
                 right: 0;
+            }
+
+            .nameButton {
+                background: transparent;
+                border: none;
+                padding: none;
+                font-size: 1rem;
+            }
+
+            .nameButton:hover {
+                text-decoration: underline;
+                color: blue;
+                cursor: pointer;
             }
 
             #chatInput {
@@ -275,7 +290,9 @@
                         allResults.forEach(tx => {
                             appendTx(tx);
                         });
-                        $('td').linkify();
+                        $('td').linkify({tagName: {
+                            mention: 'b'
+                        }});
                         $("#messageContainer").scrollTop(1000000)
                     })
             }
@@ -323,12 +340,15 @@
             }
 
             function appendTx(tx) {
+                var name = tx.out[0].s2;
                 var tr = document.createElement("tr")
                 var td_time = document.createElement("td")
                 var td_name = document.createElement("td")
                 var td_message = document.createElement("td")
+                var name_button = document.createElement("button")
+                name_button.classList.add('nameButton');
                 var message_string = document.createTextNode(tx.out[0].s4)
-                var name_string = document.createTextNode(tx.out[0].s2)
+                var name_string = document.createTextNode(name)
 
                 var date = (tx.timestamp) ? (new Date(tx.timestamp)) : (tx.blk) ? (new Date(tx.blk.t)) : (none)
 
@@ -341,7 +361,14 @@
                 var time_string = (date) ? document.createTextNode(date.format('H:i')) : "just now"
 
                 td_message.appendChild(message_string)
-                td_name.appendChild(name_string)
+                name_button.appendChild(name_string)
+                td_name.appendChild(name_button)
+
+                var $link = $(name_button).click(function (){
+                    chatArea = $(chatArea)
+                    chatArea.val(chatArea.val() + ('@' + name));
+                });
+
                 td_time.appendChild(time_string)
                 tr.appendChild(td_time)
                 tr.appendChild(td_name)
