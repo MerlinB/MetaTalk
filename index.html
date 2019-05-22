@@ -11,6 +11,7 @@
         <script src="js/linkify-jquery.min.js"></script>
         <script src="js/linkify-plugin-mention.min.js"></script>
         <script src="js/linkify-plugin-hashtag.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/mistic100/JQCloud/dist/jqcloud.min.js"></script>
         <style>
             body {
                 background-color: #ffffff;
@@ -90,7 +91,7 @@
 
             .nameButton:hover {
                 text-decoration: underline;
-                color: blue;
+                color: #4772f6;
                 cursor: pointer;
             }
 
@@ -147,12 +148,75 @@
                 width: 135px !important;
                 overflow: show;
             }
+
+            #channelCloud {
+                opacity: 0;
+                transition: opacity 0.5s ease-in-out;
+                width: 30rem;
+                height: 15rem;
+                left: 0;
+                right: 0;
+                position: absolute;
+            }
+
+            .jqcloud {
+                line-height: normal;
+                overflow: hidden;
+                margin: auto;
+                position: absolute;
+                top: 70%;
+            }
+
+            .jqcloud-word {
+                margin: 0;
+                padding: 0;
+            }
+            .jqcloud-word.w1 {
+                font-size: 100%;
+            }
+            .jqcloud-word.w2 {
+                font-size: 125%;
+            }
+            .jqcloud-word.w3 {
+                font-size: 150%;
+            }
+            .jqcloud-word.w4 {
+                font-size: 175%;
+            }
+            .jqcloud-word.w5 {
+                font-size: 200%;
+            }
+            .jqcloud-word.w6 {
+                font-size: 225%;
+            }
+            .jqcloud-word.w7 {
+                font-size: 250%;
+            }
+            .jqcloud-word.w8 {
+                font-size: 275%;
+            }
+            .jqcloud-word.w9 {
+                font-size: 300%;
+            }
+            .jqcloud-word.w10 {
+                font-size: 325%;
+            }
+            .jqcloud-word a {
+                color: inherit;
+                font-size: inherit;
+                text-decoration: none;
+            }
+            .jqcloud-word a:hover {
+                color:#4772f6;
+                cursor: pointer;
+            }
         </style>
     </head>
     <body onhashchange="update()">
         <h1>MetaTalk</h1>
         <input id="nameInput" class="centered primaryInput" step=1 name="name" placeholder="Enter a name" style="display: none;">
         <input id="channelInput" class="centered primaryInput" step=2 name="channel" placeholder="Choose a channel" style="display: none;" oninput="addHashtag()">
+        <div id="channelCloud"></div>
         <div id="content" class="content" style="display: none;">
             <div id="messageContainer">
                 <table id="messages">
@@ -177,6 +241,7 @@
             var messages = document.getElementById('messages')
             var moneybutton = document.getElementById('moneybutton')
             var messageContainer = document.getElementById('messageContainer')
+            var channelCloud = document.getElementById('channelCloud')
             var plop = new Audio('plop.mp3')
             var linkifyOptions = {
                 tagName: {
@@ -202,6 +267,7 @@
                 } else if (!channel) {
                     nameInput.style.display = 'hidden'
                     channelInput.removeAttribute("style")
+                    setCloudWords()
                     channelInput.focus()
                     channelInput.select()
                 } else {
@@ -227,6 +293,7 @@
             }
 
             function setChannel() {
+                $(channelCloud).jQCloud('destroy');
                 moveChannelInput()
                 loadContent()
             }
@@ -261,6 +328,55 @@
                     messages.removeChild(messages.firstChild);
                 }
                 current_day = null;
+            }
+
+            function setCloudWords() {
+                var cloudWords = [];
+                var channels = {};
+                var query = {
+                    v: 3,
+                    q: {
+                        find: {
+                            'out.s1': 'METATALK',
+                        },
+                        limit: 100
+                    }
+                }
+                var b64 = btoa(JSON.stringify(query))
+                var url = 'https://chronos.bitdb.network/q/1P6o45vqLdo6X8HRCZk8XuDsniURmXqiXo/' + b64
+                var config = {
+                    method: "GET",
+                    headers: { key: '1Fv74ecZUvXVJempfakNgFHgWzrpFEBuVm' }
+                }
+
+                fetch(url, config)
+                    .then(function(response) {
+                        return response.json()
+                    })
+                    .then(function(result) {
+                        const allResults = []
+                        if (result.t.length) {
+                            allResults.push(...result.t)
+                        }
+                        allResults.forEach(tx => {
+                            channels[tx.out[0].s3] = (channels[tx.out[0].s3] || 0) + 1;
+                        });
+                        for (var key in channels) {
+                            cloudWords.push({
+                                'text': key,
+                                'link': key,
+                                'weight': channels[key]
+                            })
+                        }
+                        $(channelCloud).jQCloud(cloudWords, {
+                            'afterCloudRender': () => {
+                                var cloud = $(channelCloud)
+                                requestAnimationFrame(() => {
+                                    cloud.css('opacity', 1);
+                                });
+                            }
+                        });
+                    })
             }
 
             function loadMessages() {
