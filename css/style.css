@@ -1,0 +1,228 @@
+body {
+    background-color: #ffffff;
+    font-family: 'Open Sans', serif;
+    font-size: 1rem;
+    color: #000000;
+}
+
+h1 {
+    text-align: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+h1:hover {
+    color: #4772f6;
+}
+
+input{
+    font-family: 'Open Sans', serif;
+    border: none;
+    background: transparent;
+    color: #000000;
+    text-align: center;
+    outline: none;
+}
+
+textarea{
+    font-family: 'Open Sans', serif;
+    border: none;
+    background: transparent;
+    color: #000000;
+}
+
+
+.centered {
+    text-align: center;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+}
+
+.title {
+    text-align: center;
+    top: 4rem;
+    margin: auto;
+    position:absolute;
+    width: 100%;
+    transition: bottom 1.5s ease-in-out;
+}
+
+.primaryInput {
+    font-size: 3rem;
+    display: block;
+    white-space: nowrap;
+    letter-spacing: .10em;
+    transition: .3s ease;
+}
+
+.content {
+    width: 60rem;
+    max-width: 85%;
+    margin: auto;
+    display: flex;
+    padding-top: 4rem;
+    justify-content: center;
+    padding-bottom: 0;
+    position: absolute;
+    top: 7rem;
+    bottom: 12rem;
+    left: 0;
+    right: 0;
+}
+
+.nameButton {
+    background: transparent;
+    border: none;
+    padding: none;
+    font-size: 1rem;
+}
+
+.nameButton:hover {
+    text-decoration: underline;
+    color: #4772f6;
+    cursor: pointer;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #4772f6;
+    cursor: pointer;
+}
+
+#chatInputArea {
+    z-index: 10;
+    width: inherit;
+    position: fixed;
+    padding-bottom: 4rem;
+    bottom: 0;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+#chatInput {
+    width: inherit;
+    padding: 1rem;
+}
+
+#messageContainer {
+    overflow-y: auto;
+    width: 100%;
+}
+
+#messages > tr {
+    transition: opacity 1s ease-in-out;
+    will-change: opacity;
+}
+
+#messages tr > :first-child {
+    white-space: nowrap;
+    font-weight: bold;
+    color: grey;
+    float: right;
+}
+
+#messages tr > :nth-child(2) {
+    padding-left: 2rem;
+    font-weight: bold;
+    vertical-align: top;
+}
+
+#messages tr > :nth-child(3) {
+    padding-left: 1rem;
+    word-break: break-word;
+}
+
+#moneybutton {
+    padding: 1rem;
+    width: 135px !important;
+    overflow: visible;
+}
+
+#channelCloud {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    width: 30rem;
+    height: 15rem;
+    left: 0;
+    right: 0;
+    position: absolute;
+}
+
+#contact {
+    position: absolute;
+    bottom: 2rem;
+    right: 3rem;
+}
+
+.jqcloud {
+    line-height: normal;
+    overflow: hidden;
+    margin: auto;
+    position: absolute;
+    top: 70%;
+}
+
+.jqcloud-word {
+    margin: 0;
+    padding: 0;
+}
+.jqcloud-word.w1 {
+    font-size: 100%;
+}
+.jqcloud-word.w2 {
+    font-size: 125%;
+}
+.jqcloud-word.w3 {
+    font-size: 150%;
+}
+.jqcloud-word.w4 {
+    font-size: 175%;
+}
+.jqcloud-word.w5 {
+    font-size: 200%;
+}
+.jqcloud-word.w6 {
+    font-size: 225%;
+}
+.jqcloud-word.w7 {
+    font-size: 250%;
+}
+.jqcloud-word.w8 {
+    font-size: 275%;
+}
+.jqcloud-word.w9 {
+    font-size: 300%;
+}
+.jqcloud-word.w10 {
+    font-size: 325%;
+}
+.jqcloud-word a {
+    color: inherit;
+    font-size: inherit;
+    text-decoration: none;
+}
+.jqcloud-word a:hover {
+    color:#4772f6;
+    cursor: pointer;
+}
+
+img.emojione {
+    height: 1em;
+    width: 1em;
+    margin: 0 .05em 0 .1em;
+    vertical-align: -0.1em;
+}
+
+.emojionearea .emojionearea-editor {
+    max-height: 6rem;
+    min-height: 3em;
+    color: #000000;
+}
