@@ -556,11 +556,6 @@
                 name_button.appendChild(name_string)
                 td_name.appendChild(name_button)
 
-                var $link = $(name_button).click(function (){
-                    area = emojiArea[0].emojioneArea;
-                    area.setText(area.getText() + ('@' + name));
-                });
-
                 td_time.appendChild(time_string)
                 tr.appendChild(td_time)
                 tr.appendChild(td_name)
@@ -573,8 +568,13 @@
                 }
 
                 $(td_message).linkify(linkifyOptions);
-                td_name.innerHTML = emojione.toImage(td_name.innerHTML);
+                name_button.innerHTML = emojione.toImage(td_name.innerHTML);
                 td_message.innerHTML = emojione.toImage(td_message.innerHTML);
+
+                $(name_button).click(function (){
+                    area = emojiArea[0].emojioneArea;
+                    area.setText(area.getText() + ('@' + name + ' '));
+                });
             }
 
             function appendDate(string) {
