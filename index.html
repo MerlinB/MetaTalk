@@ -408,7 +408,7 @@
                         find: {
                             'out.s1': 'METATALK',
                         },
-                        limit: 100
+                        limit: 300
                     }
                 }
                 var b64 = btoa(JSON.stringify(query))
@@ -457,8 +457,9 @@
                             'out.s3': channel
                         },
                         sort: {
-                            "timestamp": 1
-                        }
+                            "timestamp": -1
+                        },
+                        limit: 200
                     }
                 }
                 var b64 = btoa(JSON.stringify(query))
@@ -477,7 +478,7 @@
                         if (result.t.length) {
                             allResults.push(...result.t)
                         }
-                        allResults.forEach(tx => {
+                        allResults.reverse().forEach(tx => {
                             appendTx(tx);
                         });
                         $("#messageContainer").scrollTop(1000000)
