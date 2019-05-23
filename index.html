@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
         <link rel="shortcut icon" type="image/png" href="/favicon.ico"/>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300">
         <script type="text/javascript" src="https://unpkg.com/bsv@0.26.4/bsv.min.js"></script>
@@ -12,6 +13,13 @@
         <script src="js/linkify-plugin-mention.min.js"></script>
         <script src="js/linkify-plugin-hashtag.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/mistic100/JQCloud/dist/jqcloud.min.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/emojione@4.0.0/lib/js/emojione.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojione@4.0.0/extras/css/emojione.min.css"/>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojionearea@3.4.1/dist/emojionearea.min.css">
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emojionearea@3.4.1/dist/emojionearea.min.js"></script>
+
         <style>
             body {
                 background-color: #ffffff;
@@ -82,7 +90,7 @@
                 padding-bottom: 0;
                 position: absolute;
                 top: 7rem;
-                bottom: 10rem;
+                bottom: 12rem;
                 left: 0;
                 right: 0;
             }
@@ -110,16 +118,21 @@
                 cursor: pointer;
             }
 
-            #chatInput {
+            #chatInputArea {
                 z-index: 10;
                 width: inherit;
                 position: fixed;
-                padding-bottom: 5rem;
+                padding-bottom: 4rem;
                 bottom: 0;
                 margin: auto;
-                align-items: baseline;
+                align-items: center;
                 justify-content: center;
                 display: flex;
+            }
+
+            #chatInput {
+                width: inherit;
+                padding: 1rem;
             }
 
             #messageContainer {
@@ -149,19 +162,10 @@
                 padding-left: 1rem;
             }
 
-            #chatArea {
-                border-bottom: 1px solid black;
-                font-size: 1.5rem;
-                resize: none;
-                outline: none;
-                margin-left: 1rem;
-                flex-grow: 1;
-            }
-
             #moneybutton {
                 padding: 1rem;
                 width: 135px !important;
-                overflow: show;
+                overflow: visible;
             }
 
             #channelCloud {
@@ -231,6 +235,19 @@
                 color:#4772f6;
                 cursor: pointer;
             }
+
+            img.emojione {
+                height: 1em;
+                width: 1em;
+                margin: 0 .05em 0 .1em;
+                vertical-align: -0.1em;
+            }
+
+            .emojionearea .emojionearea-editor {
+                max-height: 6rem;
+                min-height: 3em;
+                color: #000000;
+            }
         </style>
     </head>
     <body onhashchange="update()">
@@ -243,9 +260,9 @@
                 <table id="messages">
                 </table>
             </div>
-            <div id="chatInput">
-                <div>
-                <textarea id="chatArea" cols="40" rows="1" placeholder="Write something" oninput="updateMoneyButton()" autocomplete="off"></textarea>
+            <div id="chatInputArea">
+                <div id="chatInput">
+                    <textarea id="chatArea" cols="40" rows="1" placeholder="Write something" oninput="updateMoneyButton()" autocomplete="off"></textarea>
                 </div>
                 <div id="moneybutton"></div>
             </div>
@@ -271,6 +288,8 @@
                     mention: 'b'
                 }
             }
+            var emojiArea;
+
 
             update()
 
@@ -356,12 +375,21 @@
 
             function loadContent() {
                 content.removeAttribute("style")
-                chatArea.focus()
-                chatArea.select()
+
                 resetContent()
                 loadMessages()
                 initBitSocket()
-                updateMoneyButton()
+                updateMoneyButton('')
+                emojiArea = $(chatArea).emojioneArea({
+                    events: {
+                        change: function (editor, event) {
+                            requestAnimationFrame(() => {
+                                updateMoneyButton(emojiArea[0].emojioneArea.getText());
+                            });
+                        },
+                    }
+                });
+                focusChat()
             }
 
             function resetContent() {
@@ -453,7 +481,6 @@
                         allResults.forEach(tx => {
                             appendTx(tx);
                         });
-                        $('td').linkify(linkifyOptions);
                         $("#messageContainer").scrollTop(1000000)
                     })
             }
@@ -489,7 +516,6 @@
                     const data = JSON.parse(e.data);
                     data.data.forEach(tx => {
                         appendTx(tx);
-                        $('td').linkify(linkifyOptions);
                         plop.play().catch(e => {
                             console.log(e);
                         });
@@ -526,8 +552,8 @@
                 td_name.appendChild(name_button)
 
                 var $link = $(name_button).click(function (){
-                    chatArea = $(chatArea)
-                    chatArea.val(chatArea.val() + ('@' + name));
+                    area = emojiArea[0].emojioneArea;
+                    area.setText(area.getText() + ('@' + name));
                 });
 
                 td_time.appendChild(time_string)
@@ -540,6 +566,9 @@
                 function setOpacity() {
                     tr.style.opacity = 1;
                 }
+
+                $(td_message).linkify(linkifyOptions);
+                td_message.innerHTML = emojione.toImage(td_message.innerHTML);
             }
 
             function appendDate(string) {
@@ -555,9 +584,8 @@
                 });
             }
 
-            function updateMoneyButton(){
-                var message = chatArea.value
-                message = bsv.Script.buildDataOut(["METATALK", name, channel, message]).toASM()
+            function updateMoneyButton(text){
+                message = bsv.Script.buildDataOut(["METATALK", name, channel, text]).toASM()
                 moneyButton.render(moneybutton, {
                     successMessage: "Sent!",
                     outputs: [{
@@ -577,11 +605,15 @@
                     buttonId: "234325",
                     onPayment: function (arg) {
                         console.log('onPayment', arg)
-                        chatArea.value = ''
-                        chatArea.focus()
-                        chatArea.select()
+                        area = emojiArea[0].emojioneArea;
+                        area.setText('');
+                        focusChat();
                     }
                 })
+            }
+
+            function focusChat() {
+                emojiArea[0].emojioneArea["editor"].focus()
             }
         </script>
     </body>
