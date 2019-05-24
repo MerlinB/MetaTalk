@@ -267,7 +267,8 @@ function appendTx(tx) {
     var td_message = document.createElement("td")
     var name_button = document.createElement("button")
     name_button.classList.add('nameButton');
-    var message_string = document.createTextNode(tx.out[0].s4)
+    var message_text = (tx.out[0].ls4) ? (tx.out[0].ls4) : (tx.out[0].s4)
+    var message_string = document.createTextNode(message_text)
     var name_string = document.createTextNode(name)
 
     var date = (tx.timestamp) ? (new Date(tx.timestamp)) : (tx.blk) ? (new Date(tx.blk.t)) : (none)
