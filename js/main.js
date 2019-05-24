@@ -145,7 +145,7 @@ function setCloudWords() {
         }
     }
     var b64 = btoa(JSON.stringify(query))
-    var url = 'https://chronos.bitdb.network/q/1P6o45vqLdo6X8HRCZk8XuDsniURmXqiXo/' + b64
+    var url = 'https://weekly.bitdb.network/q/12KQyEvGbHcJmavgmB1jDeTSJhJTzQ5ePg/' + b64
     var config = {
         method: "GET",
         headers: { key: '1Fv74ecZUvXVJempfakNgFHgWzrpFEBuVm' }
@@ -196,7 +196,7 @@ function loadMessages() {
         }
     }
     var b64 = btoa(JSON.stringify(query))
-    var url = 'https://chronos.bitdb.network/q/1P6o45vqLdo6X8HRCZk8XuDsniURmXqiXo/' + b64
+    var url = 'https://weekly.bitdb.network/q/12KQyEvGbHcJmavgmB1jDeTSJhJTzQ5ePg/' + b64
     var config = {
         method: "GET",
         headers: { key: '1Fv74ecZUvXVJempfakNgFHgWzrpFEBuVm' }
