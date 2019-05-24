@@ -110,7 +110,12 @@ function loadContent() {
     updateMoneyButton('')
     emojiArea = $(chatArea).emojioneArea({
         events: {
-            change: function (editor, event) {
+            emojibtn_click: function (editor, event) {
+                requestAnimationFrame(() => {
+                    updateMoneyButton(emojiArea[0].emojioneArea.getText());
+                });
+            },
+            keyup: function (editor, event) {
                 requestAnimationFrame(() => {
                     updateMoneyButton(emojiArea[0].emojioneArea.getText());
                 });
