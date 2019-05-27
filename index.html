@@ -2,9 +2,16 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" type="image/png" href="/favicon.ico"/>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300">
-        <script type="text/javascript" src="https://unpkg.com/bsv@0.26.4/bsv.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojione@4.0.0/extras/css/emojione.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojionearea@3.4.1/dist/emojionearea.min.css"/>
+        <link rel="stylesheet" href="css/style.css"/>
+
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/bsv@0.26.4/bsv.min.js"></script>
         <script src="https://www.moneybutton.com/moneybutton.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/jacwright/date.format/date.format.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -13,39 +20,37 @@
         <script src="js/linkify-plugin-mention.min.js"></script>
         <script src="js/linkify-plugin-hashtag.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/mistic100/JQCloud/dist/jqcloud.min.js"></script>
-
         <script src="https://cdn.jsdelivr.net/npm/emojione@4.0.0/lib/js/emojione.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojione@4.0.0/extras/css/emojione.min.css"/>
+        <script src="https://cdn.jsdelivr.net/npm/emojionearea@3.4.1/dist/emojionearea.min.js"></script>
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emojionearea@3.4.1/dist/emojionearea.min.css">
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emojionearea@3.4.1/dist/emojionearea.min.js"></script>
-        <link rel="stylesheet" href="css/style.css">
+        <script src="js/index.js" defer></script>
     </head>
 
-    <body onhashchange="update()">
-        <h1 onclick="resetChannel()">MetaTalk</h1>
-        <input id="nameInput" class="centered primaryInput" step=1 name="name" placeholder="Enter a name" style="display: none;">
-        <input id="channelInput" class="centered primaryInput" step=2 name="channel" placeholder="Choose a channel" style="display: none;" oninput="addHashtag()">
-        <div id="channelCloud"></div>
-        <div id="content" class="content" style="display: none;">
-            <div id="messageContainer">
-                <table id="messages">
-                </table>
-            </div>
-            <div id="chatInputArea">
-                <div id="chatInput">
-                    <textarea id="chatArea" cols="40" rows="1" placeholder="Write something" oninput="updateMoneyButton()" autocomplete="off"></textarea>
+    <body>
+        <div id="app">
+        <!-- <body @hashchange="update()">
+            <h1 @click="resetChannel()">MetaTalk</h1>
+            <input id="nameInput" class="centered primaryInput" step=1 name="name" placeholder="Enter a name" style="display: none;">
+            <input id="channelInput" class="centered primaryInput" step=2 name="channel" placeholder="Choose a channel" style="display: none;" oninput="addHashtag()">
+            <div id="channelCloud"></div>
+            <div id="content" class="content" style="display: none;">
+                <div id="messageContainer">
+                    <table id="messages">
+                    </table>
                 </div>
-                <div id="moneybutton"></div>
-            </div>
-        </div>
+                <div id="chatInputArea">
+                    <div id="chatInput">
+                        <textarea id="chatArea" cols="40" rows="1" placeholder="Write something" oninput="updateMoneyButton()" autocomplete="off"></textarea>
+                    </div>
+                    <div id="moneybutton"></div>
+                </div>
+            </div> -->
 
-        <div id="contact">
-            <a href="https://twitter.com/MerlinBuczek">@MerlinBuczek</a>
-            <br>
-            <a href="https://twitter.com/Pauldb8">@Pauldb</a>
-        </div>
+            <channelinput></channelinput>
 
+            <ul id="contact">
+                <contact v-for="contributor in contributors" :key="contributor.id" :name="contributor.name"></contact>
+            </ul>
+        </div>
     </body>
-    <script type="text/javascript" src="js/main.js"></script>
 </html>

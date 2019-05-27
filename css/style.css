@@ -31,7 +31,6 @@ textarea{
     color: #000000;
 }
 
-
 .centered {
     text-align: center;
     margin: auto;
@@ -160,6 +159,7 @@ a:hover {
     position: absolute;
     bottom: 2rem;
     right: 3rem;
+    list-style: none;
 }
 
 .jqcloud {
