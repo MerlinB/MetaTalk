@@ -133,6 +133,8 @@ a:hover {
     padding-left: 2rem;
     font-weight: bold;
     vertical-align: top;
+    width: 8rem;
+    word-break: break-word;
 }
 
 #messages tr > :nth-child(3) {
